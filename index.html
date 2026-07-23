@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salarischeck Onderwijs</title>
+    <style>
+        :root {
+            --primary: #005A9C;
+            --primary-dark: #003D6B;
+            --accent: #E60000;
+            --bg: #F4F6F9;
+            --card-bg: #FFFFFF;
+            --text: #333333;
+            --text-muted: #666666;
+            --border: #D1D5DB;
+            --highlight-bg: #EBF3FA;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px 24px;
+            border-bottom: 4px solid var(--accent);
+        }
+
+        header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        header p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .ios-warning {
+            background-color: #FEF3C7;
+            border-left: 4px solid #F59E0B;
+            color: #92400E;
+            padding: 10px 14px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 4px;
+            }
+            .grid-layout {
+                grid-template-columns: 1fr;
+                padding: 14px;
+                gap: 16px;
+            }
+            header {
+                padding: 16px;
+            }
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--highlight-bg);
+            padding-bottom: 6px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text);
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            height: 46px;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: #FAFAFA;
+            color: var(--text);
+        }
+
+        input[readonly] {
+            background-color: #EFEFEF;
+            color: #666666;
+            cursor: not-allowed;
+        }
+
+        .range-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .range-container input[type="range"] {
+            flex: 1;
+            height: 36px;
+            accent-color: var(--primary);
+        }
+
+        .range-value {
+            font-weight: 700;
+            font-size: 16px;
+            width: 48px;
+            text-align: right;
+        }
+
+        .calc-btn {
+            width: 100%;
+            height: 48px;
+            background-color: var(--primary);
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 2px 8px rgba(0, 90, 156, 0.3);
+        }
+
+        .calc-btn:active {
+            background-color: var(--primary-dark);
+        }
+
+        .results-box {
+            background-color: var(--highlight-bg);
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #D0E1F0;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--border);
+            font-size: 13px;
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+
+        .result-row.highlight {
+            background-color: rgba(230, 0, 0, 0.08);
+            margin: 4px -6px;
+            padding: 8px;
+            border-radius: 6px;
+            border-bottom: none;
+            font-weight: 600;
+        }
+
+        .result-row.total {
+            border-top: 2px solid var(--primary);
+            border-bottom: none;
+            margin-top: 8px;
+            padding-top: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--primary-dark);
+        }
+
+        .result-value {
+            font-weight: 600;
+        }
+
+        .netto-badge {
+            background-color: var(--primary);
+            color: white;
+            padding: 14px;
+            border-radius: 8px;
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .netto-badge .title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        .netto-badge .amount {
+            font-size: 26px;
+            font-weight: 800;
+            margin-top: 2px;
+        }
+
+        .month-note {
+            font-size: 11px;
+            color: #2563EB;
+            margin-top: 8px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        footer {
+            background-color: #FAFAFA;
+            padding: 14px 20px;
+            font-size: 11px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Salarischeck Onderwijs</h1>
+        <p>Gekalibreerd op basis van jouw loonstrook</p>
+    </header>
+
+    <div class="ios-warning">
+        📱 <strong>Openen op iPhone:</strong> Als je dit bestand direct in de app <em>'Bestanden'</em> bekijkt, blokkeert iOS soms de berekening. Tik onderin op het <strong>Deel-icoon (vierkantje met pijl omhoog)</strong> en kies <strong>"Open in Safari"</strong>.
+    </div>
+
+    <div class="grid-layout">
+        <!-- INVOER FORMULIER -->
+        <div class="input-section">
+            <div class="section-title">1. Jouw Gegevens</div>
+
+            <div class="form-group">
+                <label for="maand">Selecteer Maand</label>
+                <select id="maand" onchange="runCalc()">
+                    <option value="1">Januari</option>
+                    <option value="2">Februari</option>
+                    <option value="3">Maart</option>
+                    <option value="4">April</option>
+                    <option value="5" selected>Mei (Vakantiegeld)</option>
+                    <option value="6">Juni</option>
+                    <option value="7">Juli</option>
+                    <option value="8">Augustus</option>
+                    <option value="9">September</option>
+                    <option value="10">Oktober (Oktobertoelage)</option>
+                    <option value="11">November</option>
+                    <option value="12">December (Eindejaarsuitkering)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="sector">Onderwijssector</label>
+                <select id="sector" onchange="updateTredesAndCalc()">
+                    <option value="vo" selected>Voortgezet Onderwijs (CAO VO)</option>
+                    <option value="po">Primair Onderwijs (PO)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="schaal">Salarisschaal</label>
+                <select id="schaal" onchange="updateTredesAndCalc()">
+                    <option value="LB">Schaal LB</option>
+                    <option value="LC" selected>Schaal LC</option>
+                    <option value="LD">Schaal LD</option>
+                    <option value="LE">Schaal LE</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="trede">Salaristrede / Periodiek</label>
+                <select id="trede" onchange="runCalc()">
+                    <!-- Wordt via JS gevuld -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="wtf">Werktijdfactor (WTF)</label>
+                <div class="range-container">
+                    <input type="range" id="wtf" min="0.1" max="1.0" step="0.05" value="1.0" oninput="runCalc()" onchange="runCalc()">
+                    <span id="wtfValue" class="range-value">1.00</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="customReiskosten" style="color: #005A9C;">Netto Reiskosten (€/mnd)</label>
+                <input type="number" id="customReiskosten" value="264.15" step="0.01" inputmode="decimal" oninput="runCalc()" onchange="runCalc()">
+            </div>
+
+            <div class="form-group">
+                <label for="omoFonds">OMO Fonds / Eigen Inhoudingen (€/mnd)</label>
+                <input type="number" id="omoFonds" value="0.23" step="0.01" inputmode="decimal" oninput="runCalc()" onchange="runCalc()">
+            </div>
+
+            <button type="button" class="calc-btn" onclick="runCalc()">Bereken Salaris</button>
+        </div>
+
+        <!-- RESULTATEN -->
+        <div class="output-section">
+            <div class="section-title">2. Berekening <span id="resMaandNaam">Mei</span></div>
+
+            <div class="results-box">
+                <div class="result-row">
+                    <span>Voltijd Bruto (1.0 WTF)</span>
+                    <span id="resFulltime" class="result-value">€ 0,00</span>
+                </div>
+                <div class="result-row">
+                    <span>Bruto Maandsalaris</span>
+                    <span id="resBruto" class="result-value">€ 0,00</span>
+                </div>
+                
+                <div id="rowVakantie" class="result-row highlight">
+                    <span>Uitbetaling Vakantiegeld (8%)</span>
+                    <span id="resVakantie" class="result-value">€ 0,00</span>
+                </div>
+
+                <div id="rowEindejaar" class="result-row highlight">
+                    <span>Uitbetaling Eindejaarsuitkering (8,33%)</span>
+                    <span id="resEindejaar" class="result-value">€ 0,00</span>
+                </div>
+
+                <div id="rowOktober" class="result-row highlight">
+                    <span>Oktobertoelage (CAO VO)</span>
+                    <span id="resOktober" class="result-value">€ 0,00</span>
+                </div>
+
+                <div class="result-row total">
+                    <span>Totaal Bruto deze Maand</span>
+                    <span id="resTotaalBruto" class="result-value">€ 0,00</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;" class="results-box">
+                <div class="result-row">
+                    <span>Pensioen / NP (8,13% grondslag)</span>
+                    <span id="resPensioen" class="result-value" style="color: #C026D3;">- € 385,23</span>
+                </div>
+                <div class="result-row">
+                    <span>Premie AOP (0,36% grondslag)</span>
+                    <span id="resAOP" class="result-value" style="color: #C026D3;">- € 13,91</span>
+                </div>
+                <div class="result-row" style="font-weight: 600; background: #F0F4F8; padding: 4px 6px; border-radius: 4px;">
+                    <span>Belastbaar Loon</span>
+                    <span id="resBelastbaar" class="result-value">€ 5.027,86</span>
+                </div>
+                <div class="result-row">
+                    <span>Ingehouden Loonheffing</span>
+                    <span id="resBelasting" class="result-value" style="color: #E11D48;">- € 1.338,67</span>
+                </div>
+                <div class="result-row" style="font-weight: 700; color: #005A9C;">
+                    <span>Nettoloon (excl. reiskosten)</span>
+                    <span id="resNettoLoon" class="result-value">€ 3.689,19</span>
+                </div>
+                <div class="result-row highlight" style="background-color: rgba(16, 185, 129, 0.1); margin-top: 6px;">
+                    <span style="color: #065F46;">+ Netto Reiskostenvergoeding</span>
+                    <span id="resReiskosten" class="result-value" style="color: #065F46;">+ € 264,15</span>
+                </div>
+                <div class="result-row">
+                    <span>- OMO Fonds / Overig</span>
+                    <span id="resOMOFonds" class="result-value" style="color: #E11D48;">- € 0,23</span>
+                </div>
+            </div>
+
+            <div class="netto-badge">
+                <div class="title">Te Betalen Salaris in <span id="resMaandBadge">Mei</span></div>
+                <div id="resNetto" class="amount">€ 3.953,11</div>
+            </div>
+            <div id="monthInfo" class="month-note"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>* Berekening exact afgestemd op de parameters van jouw verstrekte loonstrook.</p>
+    </footer>
+</div>
+
+<script>
+    var salarisData = {
+        po: {
+            LB: [3622, 3710, 3821, 3933, 4046, 4185, 4348, 4533, 4742, 4975, 5234, 5520],
+            LC: [3644, 3817, 4015, 4213, 4409, 4629, 4873, 5138, 5427, 5740, 6074, 6432],
+            LD: [3659, 3874, 4125, 4376, 4627, 4910, 5225, 5577, 5960, 6378, 6828, 7313],
+            LE: [4695, 4920, 5165, 5430, 5715, 6020, 6345, 6690, 7055, 7440, 7745, 8065]
+        },
+        vo: {
+            LB: [3622, 3710, 3821, 3933, 4046, 4185, 4348, 4533, 4742, 4975, 5234, 5520],
+            LC: [3644, 3817, 4015, 4213, 4409, 4629, 4873, 5138, 5427, 5740, 6074, 6432],
+            LD: [3659, 3874, 4125, 4376, 4627, 4910, 5225, 5577, 5960, 6378, 6828, 7313],
+            LE: [4695, 4920, 5165, 5430, 5715, 6020, 6345, 6690, 7055, 7440, 7745, 8065]
+        }
+    };
+
+    var maandenNamen = [
+        "Januari", "Februari", "Maart", "April", "Mei", "Juni",
+        "Juli", "Augustus", "September", "Oktober", "November", "December"
+    ];
+
+    function formatCurrency(amount) {
+        return "€ " + amount.toFixed(2).replace(".", ",").replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+    }
+
+    function runCalc() {
+        var elMaand = document.getElementById('maand');
+        var elSector = document.getElementById('sector');
+        var elSchaal = document.getElementById('schaal');
+        var elTrede = document.getElementById('trede');
+        var elWtf = document.getElementById('wtf');
+        var elWtfValue = document.getElementById('wtfValue');
+        var elCustomReiskosten = document.getElementById('customReiskosten');
+        var elOMOFonds = document.getElementById('omoFonds');
+
+        var gekozenMaand = parseInt(elMaand.value) || 5;
+        var sector = elSector.value;
+        var schaal = elSchaal.value;
+        var tredeIdx = parseInt(elTrede.value) || 8;
+        var wtf = parseFloat(elWtf.value) || 1.0;
+        var reiskosten = parseFloat(elCustomReiskosten.value) || 0;
+        var omoFonds = parseFloat(elOMOFonds.value) || 0;
+
+        elWtfValue.innerHTML = wtf.toFixed(2);
+
+        var voltijdBedrag = 0;
+        var maxTrede = false;
+        if (salarisData[sector] && salarisData[sector][schaal] && salarisData[sector][schaal][tredeIdx] !== undefined) {
+            voltijdBedrag = salarisData[sector][schaal][tredeIdx];
+            if (tredeIdx === salarisData[sector][schaal].length - 1) {
+                maxTrede = true;
+            }
+        }
+
+        var brutoMaand = voltijdBedrag * wtf;
+        
+        var vakantiegeldUitbetaling = 0;
+        var eindejaarUitbetaling = 0;
+        var oktoberToelage = 0;
+
+        var rowVakantie = document.getElementById('rowVakantie');
+        var rowEindejaar = document.getElementById('rowEindejaar');
+        var rowOktober = document.getElementById('rowOktober');
+
+        if (gekozenMaand === 5) {
+            vakantiegeldUitbetaling = brutoMaand * 12 * 0.08;
+            rowVakantie.style.display = 'flex';
+        } else {
+            rowVakantie.style.display = 'none';
+        }
+
+        if (gekozenMaand === 12) {
+            eindejaarUitbetaling = brutoMaand * 12 * 0.0833;
+            rowEindejaar.style.display = 'flex';
+        } else {
+            rowEindejaar.style.display = 'none';
+        }
+
+        if (gekozenMaand === 10 && sector === 'vo') {
+            oktoberToelage = maxTrede ? (1640 * wtf) : (302.50 * wtf);
+            rowOktober.style.display = 'flex';
+        } else {
+            rowOktober.style.display = 'none';
+        }
+
+        var totaalBrutoMaand = brutoMaand + vakantiegeldUitbetaling + eindejaarUitbetaling + oktoberToelage;
+        
+        // Exacte verhoudingen op basis van de ingevoerde loonstrook
+        var verhouding = totaalBrutoMaand / 5427.00;
+        var pensioenInhouding = 385.23 * verhouding;
+        var aopInhouding = 13.91 * verhouding;
+        
+        var belastbaarLoon = totaalBrutoMaand - pensioenInhouding - aopInhouding;
+        
+        // Effectieve loonheffing op basis van loonstrook (~26,626%)
+        var loonheffing = belastbaarLoon * (1338.67 / 5027.86);
+        
+        var nettoloonExclReis = belastbaarLoon - loonheffing;
+        var teBetalenLoon = nettoloonExclReis + reiskosten - omoFonds;
+
+        var maandNaam = maandenNamen[gekozenMaand - 1];
+        document.getElementById('resMaandNaam').innerHTML = maandNaam;
+        document.getElementById('resMaandBadge').innerHTML = maandNaam;
+
+        document.getElementById('resFulltime').innerHTML = formatCurrency(voltijdBedrag);
+        document.getElementById('resBruto').innerHTML = formatCurrency(brutoMaand);
+        document.getElementById('resVakantie').innerHTML = formatCurrency(vakantiegeldUitbetaling);
+        document.getElementById('resEindejaar').innerHTML = formatCurrency(eindejaarUitbetaling);
+        document.getElementById('resOktober').innerHTML = formatCurrency(oktoberToelage);
+        document.getElementById('resTotaalBruto').innerHTML = formatCurrency(totaalBrutoMaand);
+
+        document.getElementById('resPensioen').innerHTML = '- ' + formatCurrency(pensioenInhouding);
+        document.getElementById('resAOP').innerHTML = '- ' + formatCurrency(aopInhouding);
+        document.getElementById('resBelastbaar').innerHTML = formatCurrency(belastbaarLoon);
+        document.getElementById('resBelasting').innerHTML = '- ' + formatCurrency(loonheffing);
+        document.getElementById('resNettoLoon').innerHTML = formatCurrency(nettoloonExclReis);
+        document.getElementById('resReiskosten').innerHTML = '+ ' + formatCurrency(reiskosten);
+        document.getElementById('resOMOFonds').innerHTML = '- ' + formatCurrency(omoFonds);
+        document.getElementById('resNetto').innerHTML = formatCurrency(teBetalenLoon);
+
+        var monthInfo = document.getElementById('monthInfo');
+        if (gekozenMaand === 5) {
+            monthInfo.innerHTML = "💡 In mei ontvang je het opgebouwde vakantiegeld (8% over het jaarsalaris).";
+        } else if (gekozenMaand === 12) {
+            monthInfo.innerHTML = "💡 In december ontvang je de eindejaarsuitkering (8,33% over het jaarsalaris).";
+        } else if (gekozenMaand === 10) {
+            if (maxTrede) {
+                monthInfo.innerHTML = "💡 In oktober ontvang je de hoogste oktobertoelage van € 1.640,- (naar rato WTF).";
+            } else {
+                monthInfo.innerHTML = "💡 In oktober ontvang je de reguliere oktobertoelage van € 302,50 (naar rato WTF).";
+            }
+        } else {
+            monthInfo.innerHTML = "";
+        }
+    }
+
+    function updateTredesAndCalc() {
+        var elSector = document.getElementById('sector');
+        var elSchaal = document.getElementById('schaal');
+        var elTrede = document.getElementById('trede');
+
+        var sector = elSector.value;
+        var schaal = elSchaal.value;
+        var currentVal = parseInt(elTrede.value) || 8; // standaard ingesteld op trede 9 (index 8)
+
+        var list = (salarisData[sector] && salarisData[sector][schaal]) ? salarisData[sector][schaal] : [];
+        
+        var optionsHtml = "";
+        for (var i = 0; i < list.length; i++) {
+            var selectedAttr = (i === currentVal) ? " selected" : "";
+            optionsHtml += '<option value="' + i + '"' + selectedAttr + '>Trede ' + (i + 1) + ' (' + formatCurrency(list[i]) + ')</option>';
+        }
+        elTrede.innerHTML = optionsHtml;
+
+        runCalc();
+    }
+
+    window.onload = function() {
+        updateTredesAndCalc();
+    };
+</script>
+
+</body>
+</html>
